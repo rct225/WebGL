@@ -5,7 +5,7 @@ var gl;
 
 var points = [];
 
-var NumTimesToSubdivide = 5;
+var NumTimesToSubdivide = 10;
 
 window.onload = function init()
 {
@@ -57,7 +57,19 @@ window.onload = function init()
 
 function triangle( a, b, c )
 {
-    points.push( a, b, c );
+    var ap = rotate(a);
+    var bp = rotate(b);
+    var cp = rotate(c);
+    points.push( ap, bp, cp );
+}
+
+function rotate(vertex) {
+    var theta = (60 * Math.PI)/180; //convert degrees to radians
+    var d =  Math.sqrt((vertex[0] * vertex[0]) + (vertex[1] * vertex[1]));
+    var new_x = 0, new_y = 0;
+    new_x = vertex[0] * Math.cos(d*theta) - vertex[1] * Math.sin(d*theta);
+    new_y = vertex[0] * Math.sin(d*theta) + vertex[1] * Math.cos(d*theta);
+    return [new_x, new_y];    
 }
 
 function divideTriangle( a, b, c, count )
@@ -83,7 +95,7 @@ function divideTriangle( a, b, c, count )
         divideTriangle( a, ab, ac, count );
         divideTriangle( c, ac, bc, count );
         divideTriangle( b, bc, ab, count );
-        divideTriangle( ab, bc, bc, count );
+        //divideTriangle( ab, bc, ac, count );
     }
 }
 
