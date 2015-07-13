@@ -21,9 +21,9 @@ window.onload = function init()
     // First, initialize the corners of our gasket with three points.
 
     var vertices = [
-        vec2( -1, -1 ),
-        vec2(  0,  1 ),
-        vec2(  1, -1 )
+        vec2( -0.5, -0.5 ),
+        vec2(  0,  0.5 ),
+        vec2(  0.5, -0.5 )
     ];
 
     divideTriangle( vertices[0], vertices[1], vertices[2],
@@ -95,12 +95,12 @@ function divideTriangle( a, b, c, count )
         divideTriangle( a, ab, ac, count );
         divideTriangle( c, ac, bc, count );
         divideTriangle( b, bc, ab, count );
-        //divideTriangle( ab, bc, ac, count );
+        divideTriangle( ab, bc, ac, count );
     }
 }
 
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT );
-    gl.drawArrays( gl.TRIANGLES, 0, points.length );
+    gl.drawArrays( gl.LINE_LOOP, 0, points.length );
 }
