@@ -1,5 +1,5 @@
 /**
- * Created by jentuck on 8/5/2015.
+ * Created by robtuck on 8/5/2015.
  */
 "use strict";
 
@@ -41,11 +41,11 @@ window.onload = function init() {
 
     initBuffers();
 
-    var m = document.getElementById("mymenu");
-
-    m.addEventListener("click", function() {
-        cIndex = m.selectedIndex;
-    });
+//    var m = document.getElementById("mymenu");
+//
+//    m.addEventListener("click", function() {
+//        cIndex = m.selectedIndex;
+//    });
     canvas.addEventListener("mousedown", function(event){
         mouseDown = true;
         lastMouseX = event.clientX;
@@ -83,7 +83,8 @@ window.onload = function init() {
 
 function tick() {
     requestAnimFrame(tick);
-    render();
+    //render();
+    drawScene();
 }
 
 var sphereVertexPositionBuffer;
@@ -172,13 +173,13 @@ function drawScene() {
 
     mat4.multiply(mvMatrix, moonRotationMatrix);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, moonVertexPositionBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, moonVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, moonVertexNormalBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, moonVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexNormalBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, sphereVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, moonVertexIndexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
     setMatrixUniforms();
-    gl.drawElements(gl.TRIANGLES, moonVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, sphereVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
