@@ -37,35 +37,54 @@ function Cone() {
         var sinTheta2 = Math.sin(theta2);
         var cosTheta2 = Math.cos(theta2);
         
-        var x = p1[0] + r1 * cosTheta1 * A[0] + r1 * sinTheta1 * B[0];
-        var y = p1[1] + r1 * cosTheta1 * A[1] + r1 * sinTheta1 * B[1];
-        var z = p1[2] + r1 * cosTheta1 * A[2] + r1 * sinTheta1 * B[2];
-        vertexPositionData.push(x)
-        vertexPositionData.push(y)
-        vertexPositionData.push(z)
+        var nx = cosTheta1 * A[0] + sinTheta1 * B[0];
+        var ny = cosTheta1 * A[1] + sinTheta1 * B[1];
+        var nz = cosTheta1 * A[2] + sinTheta1 * B[2];
+        var x = p1[0] + r1 * nx;
+        var y = p1[1] + r1 * ny;
+        var z = p1[2] + r1 * nz;
+        normalData.push(nx);
+        normalData.push(ny);
+        normalData.push(nz);
+        vertexPositionData.push(x);
+        vertexPositionData.push(y);
+        vertexPositionData.push(z);
         
-        x = p2[0] + r2 * cosTheta1 * A[0] + r2 * sinTheta1 * B[0];
-        y = p2[1] + r2 * cosTheta1 * A[1] + r2 * sinTheta1 * B[1];
-        z = p2[2] + r2 * cosTheta1 * A[2] + r2 * sinTheta1 * B[2];
-        vertexPositionData.push(x)
-        vertexPositionData.push(y)
-        vertexPositionData.push(z)
+        x = p2[0] + r2 * nx;
+        y = p2[0] + r2 * ny;
+        z = p2[0] + r2 * nz;
+        normalData.push(nx);
+        normalData.push(ny);
+        normalData.push(nz);
+        vertexPositionData.push(x);
+        vertexPositionData.push(y);
+        vertexPositionData.push(z);
+
+        nx = cosTheta2 * A[0] + sinTheta2 * B[0];
+        ny = cosTheta2 * A[1] + sinTheta2 * B[1];
+        nz = cosTheta2 * A[2] + sinTheta2 * B[2];
         
         if (r2 != 0) {
-        	x = p2[0] + r2 * cosTheta2 * A[0] + r2 * sinTheta2 * B[0];
-        	y = p2[1] + r2 * cosTheta2 * A[1] + r2 * sinTheta2 * B[1];
-        	z = p2[2] + r2 * cosTheta2 * A[2] + r2 * sinTheta2 * B[2];
-            vertexPositionData.push(x)
-            vertexPositionData.push(y)
-            vertexPositionData.push(z)
+        	x = p2[0] + r2 * nx;
+        	y = p2[1] + r2 * ny;
+        	z = p2[2] + r2 * nz;
+            normalData.push(nx);
+            normalData.push(ny);
+            normalData.push(nz);
+            vertexPositionData.push(x);
+            vertexPositionData.push(y);
+            vertexPositionData.push(z);
         }
         if (r1 != 0 ) {
-        	x = p1[0] + r1 * cosTheta2 * A[0] + r1 * sinTheta2 * B[0];
-        	y = p1[1] + r1 * cosTheta2 * A[1] + r1 * sinTheta2 * B[1];
-        	z = p1[2] + r1 * cosTheta2 * A[2] + r1 * sinTheta2 * B[2];
-            vertexPositionData.push(x)
-            vertexPositionData.push(y)
-            vertexPositionData.push(z)
+        	x = p1[0] + r1 * nx;
+        	y = p1[1] + r1 * ny;
+        	z = p1[2] + r1 * nz;
+            normalData.push(nx);
+            normalData.push(ny);
+            normalData.push(nz);
+            vertexPositionData.push(x);
+            vertexPositionData.push(y);
+            vertexPositionData.push(z);
         }
         
         
@@ -73,19 +92,19 @@ function Cone() {
     
     var indexData = [];
     for (var i = 0; i < facets ; i++) {
-    	indexData.push(i)
-    	indexData.push(i+1)
-    	indexData.push(i+2)
+    	indexData.push(i);
+    	indexData.push(i+1);
+    	indexData.push(i+2);
     	
-    	indexData.push(i)
-    	indexData.push(i+2)
-    	indexData.push(i+3)
+    	indexData.push(i);
+    	indexData.push(i+2);
+    	indexData.push(i+3);
     }
     
     return {
     	v: vertexPositionData,
     	n: normalData,
-    	t: textureCoordData,
+    	//t: textureCoordData,
     	i: indexData
-    }
+    };
 }
