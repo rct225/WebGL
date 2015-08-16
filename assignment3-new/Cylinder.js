@@ -3,6 +3,7 @@
 var canvas;
 var gl;
 
+
 var index = 0;
 
 var cylinderArray = [];
@@ -42,57 +43,90 @@ window.onload = function init() {
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
-    var p1 = vec3(1,1,1);
-    var p2 = vec3(1,1,-60);
-    var A = vec3(10,0,0);
-    var B = vec3(0,10,0);
-    var r1 = 10;
-    var r2 = 20;
-    var facets = 30;
+    var degAngle = 90;
+    var facets = 360 / degAngle;
+    var angle = radians(degAngle);
+    var height = 2;
     
-    for (var i = 0; i < facets ; i++) {
-    	var theta1 = 0.21;
-    	var theta2 = 0.42;
-    	
-    	theta = theta1 + i * (theta2 - theta1) / facets;
-    	var sinTheta = Math.sin(theta);
-        var cosTheta = Math.cos(theta);
+    console.log(facets);
+    
+    for (var h = 0; h <= height; h += height) {
+    	var cylPts = vec4(0,0,h,1);
 
-        var nx = cosTheta * A[0] + sinTheta * B[0];
-        var ny = cosTheta * A[1] + sinTheta * B[1];
-        var nz = cosTheta * A[2] + sinTheta * B[2];
-        
-        var x = p1[0] + r1 * nx;
-        var y = p1[1] + r1 * ny;
-        var z = p1[2] + r1 * nz;
-        cylinderArray.push(x);
-        cylinderArray.push(y);
-        cylinderArray.push(z);
-        cylinderArray.push(1);
-
-        x = p2[0] + r2 * nx;
-        y = p2[0] + r2 * ny;
-        z = p2[0] + r2 * nz;
-        cylinderArray.push(x);
-        cylinderArray.push(y);
-        cylinderArray.push(z);
-        cylinderArray.push(1);        
-        
+    	cylinderArray.push(cylPts);
+	    
+    	cylPts = vec4(radius, 0, h, 1);
+	    cylinderArray.push(cylPts);
+	    
+	    for (var n=1; n <= facets; n++) {
+	        var alpha = n * angle;
+	        var sinAlpha = Math.sin(alpha);
+	        var cosAlpha = Math.cos(alpha);
+	        
+	        var tx = radius * cosAlpha;
+	        var ty = radius * sinAlpha;
+	        var tz = h;
+	        var ta = 1;
+	        cylPts = vec4(tx, ty, tz, ta)
+	        cylinderArray.push(cylPts);
+	
+	    }
+    
     }
     
-    for (var i = 0; i < facets ; i++) {
-    	indexData.push(i);
-    	indexData.push(i+1);
-    	indexData.push(i+2);
-    	
-    	indexData.push(i);
-    	indexData.push(i+2);
-    	indexData.push(i+3);
+    for (var ix = 1; ix < facets; ix++) {
+    	indexBuffer.push(0);
+    	indexBuffer.push(ix)
+    	indexBuffer.push(ix+1)
     }
+    
+    indexBuffer.push(0);
+    indexBuffer.push(facets);
+    indexBuffer.push(1);
+    
+    for (var ix = facets + 2; ix <= 2 * facets; ix++) {
+    	indexBuffer.push(facets + 1);
+    	indexBuffer.push(ix)
+    	indexBuffer.push(ix + 1)
+    }
+   
+    indexBuffer.push(facets + 1);
+    indexBuffer.push(2*facets + 1);
+    indexBuffer.push(facets + 2);
+
+    indexBuffer.push(1);
+    indexBuffer.push(2);
+    indexBuffer.push(facets+2);
+    
+    var tri = 0;
+    for (tri = 1; tri < facets - 1 ; tri++){
+    	indexBuffer.push(tri+1); 
+    	indexBuffer.push(facets + tri + 1);
+    	indexBuffer.push(facets + tri + 2);
+    	indexBuffer.push(tri+1);
+    	indexBuffer.push(tri+2);
+    	indexBuffer.push(facets + tri + 2);
+    }
+    
+    indexBuffer.push(tri+1);
+    indexBuffer.push(facets + tri + 1);
+    indexBuffer.push(facets + tri + 2);
+    
+    indexBuffer.push(tri+1);
+    indexBuffer.push(1);
+    indexBuffer.push(facets + tri + 2);
+    
+    indexBuffer.push(1);
+    indexBuffer.push(facets + tri + 2);
+    indexBuffer.push(facets+2);
+    
+    
+    console.log(cylinderArray);
+    console.log(indexBuffer);
     
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
-    gl.bufferData( gl.ARRAY_BUFFER, new Float32Array(cylinderArray), gl.STATIC_DRAW);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(cylinderArray), gl.STATIC_DRAW);
     	
     var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0);
