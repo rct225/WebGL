@@ -11,11 +11,11 @@ var indexData = [];
 
 var near = -10;
 var far = 10;
-var radius = 2.0;
-var theta  = 0.0;
-var phi    = 0.0;
+var radius = 1.0;
+var theta  = 0.5;
+var phi    = 0.4;
 
-var left = -2.0;
+var left = -4.0;
 var right = 2.0;
 var ytop = 2.0;
 var bottom = -2.0;
@@ -43,100 +43,113 @@ window.onload = function init() {
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
-    var degAngle = 90;
-    var facets = 360 / degAngle;
-    var angle = radians(degAngle);
+    //var degAngle = 0;
+    var facets = 30;
+    var deltaAngle = Math.PI*2 / facets;
+    var angle = 0;
     var height = 2;
     
-    console.log(facets);
-    
-    for (var h = 0; h <= height; h += height) {
-    	var cylPts = vec4(0,0,h,1);
 
-    	cylinderArray.push(cylPts);
-	    
-    	cylPts = vec4(radius, 0, h, 1);
-	    cylinderArray.push(cylPts);
-	    
-	    for (var n=1; n <= facets; n++) {
-	        var alpha = n * angle;
+    	cylinderArray.push(0.0);
+    	cylinderArray.push(0.0);
+    	cylinderArray.push(0.0);
+    	
+	    for (var a=0; a < facets; a++) {
+	        var alpha = angle + deltaAngle * a;
 	        var sinAlpha = Math.sin(alpha);
 	        var cosAlpha = Math.cos(alpha);
 	        
 	        var tx = radius * cosAlpha;
 	        var ty = radius * sinAlpha;
-	        var tz = h;
-	        var ta = 1;
-	        cylPts = vec4(tx, ty, tz, ta)
-	        cylinderArray.push(cylPts);
-	
+	        var tz = 0.0;
+	        cylinderArray.push(tx);
+	        cylinderArray.push(ty);
+	        cylinderArray.push(tz);	
+	    }
+	    
+	    cylinderArray.push(0.0);
+	    cylinderArray.push(0.0);
+	    cylinderArray.push(-2.0);
+
+	    for (var b = 0; b < facets; b++ ) {
+	        var alpha = angle + deltaAngle * b;
+	        var sinAlpha = Math.sin(alpha);
+	        var cosAlpha = Math.cos(alpha);
+	        
+	        var tx = radius * cosAlpha;
+	        var ty = radius * sinAlpha;
+	        var tz = -2.0;
+	        cylinderArray.push(tx);
+	        cylinderArray.push(ty);
+	        cylinderArray.push(tz);	
 	    }
     
+	// bottom
+    for (var ibx = 0; ibx < facets; ibx++) {
+    	if (ibx === facets-1) {
+    	    indexData.push(0);
+    	    indexData.push(facets);
+    	    indexData.push(1);
+    	} else {
+    		indexData.push(0);
+    		indexData.push(ibx+1);
+    		indexData.push(ibx+2);
+    	}
     }
     
-    for (var ix = 1; ix < facets; ix++) {
-    	indexBuffer.push(0);
-    	indexBuffer.push(ix)
-    	indexBuffer.push(ix+1)
+    // top 
+    var skip = facets + 1; // skip over the sides in the bottom
+    for (var itx = 0; itx < facets; itx++) {
+    	if (itx === facets-1) {
+    	    indexData.push(skip);
+    	    indexData.push(facets + skip);
+    	    indexData.push(1 + skip);
+    	} else {
+    		indexData.push(skip);
+    		indexData.push(itx + 1 + skip);
+    		indexData.push(itx + 2 + skip);
+    
+    	}
     }
     
-    indexBuffer.push(0);
-    indexBuffer.push(facets);
-    indexBuffer.push(1);
-    
-    for (var ix = facets + 2; ix <= 2 * facets; ix++) {
-    	indexBuffer.push(facets + 1);
-    	indexBuffer.push(ix)
-    	indexBuffer.push(ix + 1)
-    }
-   
-    indexBuffer.push(facets + 1);
-    indexBuffer.push(2*facets + 1);
-    indexBuffer.push(facets + 2);
-
-    indexBuffer.push(1);
-    indexBuffer.push(2);
-    indexBuffer.push(facets+2);
-    
-    var tri = 0;
-    for (tri = 1; tri < facets - 1 ; tri++){
-    	indexBuffer.push(tri+1); 
-    	indexBuffer.push(facets + tri + 1);
-    	indexBuffer.push(facets + tri + 2);
-    	indexBuffer.push(tri+1);
-    	indexBuffer.push(tri+2);
-    	indexBuffer.push(facets + tri + 2);
-    }
-    
-    indexBuffer.push(tri+1);
-    indexBuffer.push(facets + tri + 1);
-    indexBuffer.push(facets + tri + 2);
-    
-    indexBuffer.push(tri+1);
-    indexBuffer.push(1);
-    indexBuffer.push(facets + tri + 2);
-    
-    indexBuffer.push(1);
-    indexBuffer.push(facets + tri + 2);
-    indexBuffer.push(facets+2);
+    for (var tri = 1; tri <= facets ; tri++) {
+    	if (tri === facets) {
+    		indexData.push(tri);
+    		indexData.push(1);
+    		indexData.push(skip + 1);
+    		
+    		indexData.push(tri);
+    		indexData.push(tri + skip);
+    		indexData.push(skip + 1);
+    	} else {
+    		
+    		indexData.push(tri); 
+    		indexData.push(tri + 1);
+    		indexData.push(tri + 1 + skip);
+    		
+    		indexData.push(tri);
+    		indexData.push(tri + skip);
+    		indexData.push(tri + 1 + skip);
+    	}
+    }	
     
     
     console.log(cylinderArray);
-    console.log(indexBuffer);
+    console.log(indexData);
     
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(cylinderArray), gl.STATIC_DRAW);
     	
     var vPosition = gl.getAttribLocation( program, "vPosition");
-    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray( vPosition);
     
     indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
-    indexBuffer.itemSize = 1;
-    indexBuffer.numItems = indexData.length;
+    //indexBuffer.itemSize = 1;
+    //indexBuffer.numItems = indexData.length;
 
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
@@ -158,8 +171,10 @@ function render() {
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
 
-    gl.drawElements(gl.LINE_LOOP, indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.LINE_LOOP, indexData.length, gl.UNSIGNED_SHORT, 0);
 
+    //gl.drawArrays(gl.LINE_LOOP, 0, cylinderArray.length/3);
+    
     window.requestAnimFrame(render);
 
 
