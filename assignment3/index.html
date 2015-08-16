@@ -31,13 +31,22 @@ main()
 <script type="text/javascript" src="../Common/webgl-utils.js"></script>
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="Cone.js"></script>
 <script type="text/javascript" src="Cylinder.js"></script>
+<script type="text/javascript" src="Sphere.js"></script>
+<script type="text/javascript" src="renderShape.js"></script>
 </head>   
 
 <body>
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
+<select id="shapeSelect">
+  <option value="Cone">Cone</option>
+  <option value="Cylinder">Cylinder</option>
+  <option value="Sphere">Sphere</option>
+</select>
+
 
 </body>
 </html>
