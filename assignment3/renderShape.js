@@ -25,12 +25,32 @@ const up = vec3(0.0, 1.0, 0.0);
 
 var indexBuffer;
 
-window.onload = function init() {
+
+function onChange() {
+    var selects = document.getElementById('shapeSelect');
+    var selectedValue = selects.options[selects.selectedIndex].value;
+    var shape;
+    
+    switch (selectedValue) {
+	case 'Cone':
+	    shape = Cone(2.0, 1.0);
+	    break;
+	case 'Cylinder':
+		shape = Cylinder(2.0, 1.0);
+		break;
+	case 'Sphere':
+		shape = Sphere(2.0);
+		break;
+    }
+    renderShape(shape);
+}
+
+function renderShape( shape ) {
     canvas = document.getElementById( "gl-canvas" );
 
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
-
+    
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
 
@@ -39,10 +59,11 @@ window.onload = function init() {
     //
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
-    
-    var shape = Cone(2.0, 1.0);
+
     shapeArray = shape.v;
     indexData = shape.i;
+    
+    console.log(shapeArray);
     
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
