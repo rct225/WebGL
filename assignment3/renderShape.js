@@ -17,6 +17,19 @@ var right = 2.0;
 var ytop = 2.0;
 var bottom = -2.0;
 
+var lightPosition = vec4(1.0, 1.0, 1.0, 0.0 );
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
+var lightDiffuse = vec4( 1.0, 1.0, 1.0, 1.0 );
+var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+
+var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+var materialSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
+var materialShininess = 20.0;
+
+var ctm;
+var ambientColor, diffuseColor, specularColor;
+
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
 var eye;
@@ -61,11 +74,24 @@ function renderShape( shape ) {
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
 
+    var ambientProduct = mult(lightAmbient, materialAmbient);
+    var diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    var specularProduct = mult(lightSpecular, materialSpecular);
+    
     shapeArray = shape.v;
     indexData = shape.i;
+    normalArray = shape.n;
     
     console.log(shapeArray);
     
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalArray), gl.STATIC_DRAW );
+
+    var vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal);
+           
     gl.deleteBuffer(vBuffer);
     vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
@@ -83,6 +109,17 @@ function renderShape( shape ) {
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
     
+    gl.uniform4fv( gl.getUniformLocation(program,
+    	"ambientProduct"),flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program,
+    	"diffuseProduct"),flatten(diffuseProduct) );
+ 	gl.uniform4fv( gl.getUniformLocation(program,
+ 		"specularProduct"),flatten(specularProduct) );
+ 	gl.uniform4fv( gl.getUniformLocation(program,
+ 		"lightPosition"),flatten(lightPosition) );
+ 	gl.uniform1f( gl.getUniformLocation(program,
+ 		"shininess"),materialShininess );
+ 
     render();
 }
 
@@ -99,8 +136,11 @@ function render() {
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
 
-    gl.drawElements(gl.LINE_LOOP, indexData.length, gl.UNSIGNED_SHORT, 0);
+    //gl.drawElements(gl.TRIANGLES, indexData.length, gl.UNSIGNED_SHORT, 0);
+    for (var i = 0; i < indexData.length; i+=3) {
+    	gl.drawArrays(gl. TRIANGLES, i, 3);
+    }
     
-    window.requestAnimFrame(render);
+    window.requestAnimFrame(render);   
 
 }
