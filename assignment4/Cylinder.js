@@ -42,7 +42,7 @@ function Cylinder( radius, height ) {
 	    cylinderArray.push(-2.0);
 	    normalArray.push(0.0);
 	    normalArray.push(0.0);
-	    normalArray.push(-2.0);
+	    normalArray.push(-1.0);
 
 	    for (var b = 0; b < facets; b++ ) {
 	        var alpha = angle + deltaAngle * b;
@@ -57,7 +57,7 @@ function Cylinder( radius, height ) {
 	        cylinderArray.push(tz);
 	        normalArray.push(casAlpha);
 	        normalArray.push(sinAlpha);
-	        normalArray.push(tz);
+	        normalArray.push(-1.0);
 	    }
     
 	// bottom
