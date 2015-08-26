@@ -2,6 +2,7 @@
 
 var sphereArray = [];
 var indexData = [];
+var normalArray = [];
 
 function Sphere( radius ) {
 
@@ -22,6 +23,9 @@ function Sphere( radius ) {
             var y = cosTheta;
             var z = sinPhi * sinTheta;
 
+            normalArray.push(x);
+            normalArray.push(y);
+            normalArray.push(z);
             sphereArray.push(radius * x);
             sphereArray.push(radius * y);
             sphereArray.push(radius * z);
@@ -44,7 +48,8 @@ function Sphere( radius ) {
     
     return {
     	v: sphereArray,
-    	i: indexData
+    	i: indexData,
+    	n: normalArray
     };
 
 }
