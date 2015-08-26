@@ -32,8 +32,8 @@ function Cylinder( radius, height ) {
 	        cylinderArray.push(tx);
 	        cylinderArray.push(ty);
 	        cylinderArray.push(tz);
+	        normalArray.push(casAlpha);
 	        normalArray.push(sinAlpha);
-	        normalArray.push(cosAlpha);
 	        normalArray.push(tz);
 	    }
 	    
@@ -55,8 +55,8 @@ function Cylinder( radius, height ) {
 	        cylinderArray.push(tx);
 	        cylinderArray.push(ty);
 	        cylinderArray.push(tz);
+	        normalArray.push(casAlpha);
 	        normalArray.push(sinAlpha);
-	        normalArray.push(cosAlpha);
 	        normalArray.push(tz);
 	    }
     
