@@ -2,6 +2,7 @@
 
 var coneArray = [];
 var indexData = [];
+var normalArray = [];
 
 function Cone( radius, height ) {
 
@@ -16,6 +17,9 @@ function Cone( radius, height ) {
     	coneArray.push(0.0);
     	coneArray.push(0.0);
     	coneArray.push(0.0);
+    	normalArray.push(0.0);
+    	normalArray.push(0.0);
+    	normalArray.push(0.0);
     	
 	    for (var a=0; a < facets; a++) {
 	        var alpha = angle + deltaAngle * a;
@@ -28,11 +32,17 @@ function Cone( radius, height ) {
 	        coneArray.push(tx);
 	        coneArray.push(ty);
 	        coneArray.push(tz);	
+	        normalArray.push(cosAlpha);
+	        normalArray.push(sinAlpha);
+	        normalArray.push(tz);
 	    }
 	    
 	    coneArray.push(0.0);
 	    coneArray.push(0.0);
 	    coneArray.push(-2.0);
+	    normalArray.push(0.0);
+	    normalArray.push(0.0);
+	    normalArray.push(-1.0);
     
 	// bottom
     for (var ibx = 0; ibx < facets; ibx++) {
@@ -63,7 +73,8 @@ function Cone( radius, height ) {
     
     return {
     	v: coneArray,
-    	i: indexData
+    	i: indexData,
+    	n: normalArray
     };
 
 }
