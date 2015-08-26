@@ -32,6 +32,8 @@ var ambientColor, diffuseColor, specularColor;
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
+var normalMatrixLoc, normalMatrix;
+
 var eye;
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
@@ -53,7 +55,7 @@ function onChange() {
 		shape = Cylinder(2.0, 1.0);
 		break;
 	case 'Sphere':
-		shape = Sphere(2.0);
+		shape = Sphere(1.0);
 		break;
     }
     renderShape(shape);
@@ -108,17 +110,14 @@ function renderShape( shape ) {
 
     modelViewMatrixLoc = gl.getUniformLocation( program, "modelViewMatrix" );
     projectionMatrixLoc = gl.getUniformLocation( program, "projectionMatrix" );
+    normalMatrixLoc = gl.getUniformLocation( program, "normalMatrix" );
+
     
-    gl.uniform4fv( gl.getUniformLocation(program,
-    	"ambientProduct"),flatten(ambientProduct) );
-    gl.uniform4fv( gl.getUniformLocation(program,
-    	"diffuseProduct"),flatten(diffuseProduct) );
- 	gl.uniform4fv( gl.getUniformLocation(program,
- 		"specularProduct"),flatten(specularProduct) );
- 	gl.uniform4fv( gl.getUniformLocation(program,
- 		"lightPosition"),flatten(lightPosition) );
- 	gl.uniform1f( gl.getUniformLocation(program,
- 		"shininess"),materialShininess );
+    gl.uniform4fv( gl.getUniformLocation(program, "ambientProduct"), flatten(ambientProduct) );
+    gl.uniform4fv( gl.getUniformLocation(program, "diffuseProduct"), flatten(diffuseProduct) );
+ 	gl.uniform4fv( gl.getUniformLocation(program, "specularProduct"), flatten(specularProduct) );
+ 	gl.uniform4fv( gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition) );
+ 	gl.uniform1f( gl.getUniformLocation(program, "shininess"), materialShininess );
  
     render();
 }
@@ -132,14 +131,21 @@ function render() {
 
     modelViewMatrix = lookAt(eye, at , up);
     projectionMatrix = ortho(left, right, bottom, ytop, near, far);
+    normalMatrix = [
+                    vec3(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2]),
+                    vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
+                    vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
+                ];
+
 
     gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
     gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
-
-    //gl.drawElements(gl.TRIANGLES, indexData.length, gl.UNSIGNED_SHORT, 0);
-    for (var i = 0; i < indexData.length; i+=3) {
-    	gl.drawArrays(gl. TRIANGLES, i, 3);
-    }
+    gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
+    
+    gl.drawElements(gl.TRIANGLES, indexData.length, gl.UNSIGNED_SHORT, 0);
+    //for (var i = 0; i < indexData.length; i+=1) {
+    //	gl.drawArrays(gl.TRIANGLES, i, 1);
+    //}
     
     window.requestAnimFrame(render);   
 
