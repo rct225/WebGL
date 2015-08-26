@@ -24,7 +24,8 @@ const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
 var indexBuffer;
-
+var vBuffer;
+var vPosition;
 
 function onChange() {
     var selects = document.getElementById('shapeSelect');
@@ -65,14 +66,16 @@ function renderShape( shape ) {
     
     console.log(shapeArray);
     
-    var vBuffer = gl.createBuffer();
+    gl.deleteBuffer(vBuffer);
+    vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(shapeArray), gl.STATIC_DRAW);
     	
-    var vPosition = gl.getAttribLocation( program, "vPosition");
+    vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray( vPosition);
     
+    gl.deleteBuffer(indexBuffer);
     indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
