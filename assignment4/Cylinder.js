@@ -2,6 +2,7 @@
 
 var cylinderArray = [];
 var indexData = [];
+var normalArray = [];
 
 function Cylinder( radius, height ) {
 
@@ -15,6 +16,10 @@ function Cylinder( radius, height ) {
     	cylinderArray.push(0.0);
     	cylinderArray.push(0.0);
     	cylinderArray.push(0.0);
+    	normalArray.push(0.0);
+    	normalArray.push(0.0);
+    	normalArray.push(0.0);
+    	
     	
 	    for (var a=0; a < facets; a++) {
 	        var alpha = angle + deltaAngle * a;
@@ -26,12 +31,18 @@ function Cylinder( radius, height ) {
 	        var tz = 0.0;
 	        cylinderArray.push(tx);
 	        cylinderArray.push(ty);
-	        cylinderArray.push(tz);	
+	        cylinderArray.push(tz);
+	        normalArray.push(sinAlpha);
+	        normalArray.push(cosAlpha);
+	        normalArray.push(tz);
 	    }
 	    
 	    cylinderArray.push(0.0);
 	    cylinderArray.push(0.0);
 	    cylinderArray.push(-2.0);
+	    normalArray.push(0.0);
+	    normalArray.push(0.0);
+	    normalArray.push(-2.0);
 
 	    for (var b = 0; b < facets; b++ ) {
 	        var alpha = angle + deltaAngle * b;
@@ -43,7 +54,10 @@ function Cylinder( radius, height ) {
 	        var tz = -2.0;
 	        cylinderArray.push(tx);
 	        cylinderArray.push(ty);
-	        cylinderArray.push(tz);	
+	        cylinderArray.push(tz);
+	        normalArray.push(sinAlpha);
+	        normalArray.push(cosAlpha);
+	        normalArray.push(tz);
 	    }
     
 	// bottom
@@ -97,7 +111,8 @@ function Cylinder( radius, height ) {
 
     return {
     	v: cylinderArray,
-    	i: indexData
+    	i: indexData,
+    	n: normalArray
     };
 
 }
