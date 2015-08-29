@@ -38,9 +38,6 @@ var eye;
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
 
-var indexBuffer;
-var vBuffer;
-var vPosition;
 
 function onChange() {
     var selects = document.getElementById('shapeSelect');
@@ -49,10 +46,10 @@ function onChange() {
     
     switch (selectedValue) {
 	case 'Cone':
-	    shape = Cone(2.0, 1.0);
+	    shape = Cone(1.0, 1.0);
 	    break;
 	case 'Cylinder':
-		shape = Cylinder(2.0, 1.0);
+		shape = Cylinder(1.0, 1.0);
 		break;
 	case 'Sphere':
 		shape = Sphere(1.0);
@@ -69,6 +66,8 @@ function renderShape( shape ) {
     
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
+    
+    gl.enable(gl.DEPTH_TEST);
 
     //
     //  Load shaders and initialize attribute buffers
@@ -94,17 +93,15 @@ function renderShape( shape ) {
     gl.vertexAttribPointer( vNormal, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vNormal);
            
-    gl.deleteBuffer(vBuffer);
-    vBuffer = gl.createBuffer();
+    var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData( gl.ARRAY_BUFFER, flatten(shapeArray), gl.STATIC_DRAW);
     	
-    vPosition = gl.getAttribLocation( program, "vPosition");
+    var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray( vPosition);
     
-    gl.deleteBuffer(indexBuffer);
-    indexBuffer = gl.createBuffer();
+    var indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
 
@@ -143,8 +140,8 @@ function render() {
     gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix) );
     
     gl.drawElements(gl.TRIANGLES, indexData.length, gl.UNSIGNED_SHORT, 0);
-    //for (var i = 0; i < indexData.length; i+=1) {
-    //	gl.drawArrays(gl.TRIANGLES, i, 1);
+    //for (var i = 0; i < indexData.length; i+=3) {
+    //	gl.drawArrays(gl.TRIANGLES, i, 3);
     //}
     
     window.requestAnimFrame(render);   
